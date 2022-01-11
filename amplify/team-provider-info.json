@@ -1,0 +1,20 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-weddingsite-staging-170128-authRole",
+      "UnauthRoleArn": "arn:aws:iam::681937532796:role/amplify-weddingsite-staging-170128-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::681937532796:role/amplify-weddingsite-staging-170128-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-weddingsite-staging-170128-deployment",
+      "UnauthRoleName": "amplify-weddingsite-staging-170128-unauthRole",
+      "StackName": "amplify-weddingsite-staging-170128",
+      "StackId": "arn:aws:cloudformation:us-east-2:681937532796:stack/amplify-weddingsite-staging-170128/9f0b5430-70a4-11ec-9824-024531c38f04",
+      "AmplifyAppId": "d1ke2bozotlh3d"
+    },
+    "categories": {
+      "auth": {
+        "WeddingSite": {}
+      }
+    }
+  }
+}

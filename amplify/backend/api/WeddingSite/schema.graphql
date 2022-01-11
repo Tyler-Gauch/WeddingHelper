@@ -1,0 +1,21 @@
+type Household @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Guests: [Guest] @hasMany(indexName: "byHousehold", fields: ["id"])
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  zipcode: String
+}
+
+type Guest @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  prefix: String
+  firstName: String
+  lastName: String
+  suffix: String
+  householdId: ID @index(name: "byHousehold")
+  hasPlusOne: Boolean
+  withBride: Boolean
+}
+ 
