@@ -59,12 +59,5 @@
         ]
       }
     }
-  },
-  "function": {
-    "getCognitoUserList": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    }
   }
 }
