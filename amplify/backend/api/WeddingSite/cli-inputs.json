@@ -3,19 +3,19 @@
   "serviceConfiguration": {
     "apiName": "WeddingSite",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-e5f0498c-f2e0-46a2-b8e2-e386e049731d/amplify/backend/api/WeddingSite/schema.graphql",
+    "gqlSchemaPath": "C:\\Users\\tag10\\Documents\\WeddingSite\\amplify\\backend\\api\\WeddingSite\\schema.graphql",
     "defaultAuthType": {
-      "mode": "API_KEY",
-      "keyDescription": "api key description",
-      "expirationTime": 30
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authWeddingSite"
     },
     "additionalAuthTypes": [
       {
-        "mode": "AWS_IAM"
+        "mode": "API_KEY",
+        "expirationTime": 30,
+        "keyDescription": "api key description"
       },
       {
-        "mode": "AMAZON_COGNITO_USER_POOLS",
-        "cognitoUserPoolId": "authWeddingSite"
+        "mode": "AWS_IAM"
       }
     ],
     "conflictResolution": {

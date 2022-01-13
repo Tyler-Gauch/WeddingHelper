@@ -4,12 +4,28 @@ import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplif
 
 
 
+type WeddingMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type HouseholdMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
 type GuestMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+export declare class Wedding {
+  readonly id: string;
+  readonly Households?: (Household | null)[];
+  readonly Guests?: (Guest | null)[];
+  readonly name?: string;
+  readonly authorizedUsers?: (string | null)[];
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  constructor(init: ModelInit<Wedding, WeddingMetaData>);
+  static copyOf(source: Wedding, mutator: (draft: MutableModel<Wedding, WeddingMetaData>) => MutableModel<Wedding, WeddingMetaData> | void): Wedding;
 }
 
 export declare class Household {
@@ -20,6 +36,7 @@ export declare class Household {
   readonly city?: string;
   readonly state?: string;
   readonly zipcode?: string;
+  readonly weddingID?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Household, HouseholdMetaData>);
@@ -35,6 +52,7 @@ export declare class Guest {
   readonly householdId?: string;
   readonly hasPlusOne?: boolean;
   readonly withBride?: boolean;
+  readonly weddingID?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Guest, GuestMetaData>);

@@ -1,4 +1,4 @@
-import { Amplify } from 'aws-amplify';
+import { Amplify, API } from 'aws-amplify';
 
 import { AmplifyProvider, Authenticator, Link, Grid, Card, View } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
@@ -9,10 +9,20 @@ import {theme} from './theme';
 import { BrowserRouter, Route, Routes, Link as ReactRouterLink } from 'react-router-dom';
 
 import awsExports from './aws-exports';
+import { useState } from 'react';
+import { getWedding } from './graphql/queries';
 
 Amplify.configure(awsExports);
 
 export default function App() {
+
+  const [wedding, setWedding] = useState();
+
+  const onWeddingChange = async (wantedWeddingId) => {
+    const { data: { getWedding: w } } = await API.graphql({query: getWedding, variables: {id: wantedWeddingId}});
+    setWedding(w);
+  }
+
   return (
     <BrowserRouter>
       <AmplifyProvider theme={theme}>
@@ -24,7 +34,7 @@ export default function App() {
                 templateColumns="1fr 1fr 1fr 1fr 1fr 1fr"
                 templateRows="10fr"
               >
-                <NavBar signOut={signOut}/>
+                <NavBar signOut={signOut} user={user} onWeddingSelect={(w) => onWeddingChange(w)} selectedWedding={wedding}/>
                 <View
                     columnStart="1"
                     columnEnd="2"
@@ -53,9 +63,9 @@ export default function App() {
                 >
                   <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/guests" element={<Guests />} />
-                    <Route path="/households" element={<Households />} />
-                    <Route path="/labels" element={<CreateLabels />} />
+                    <Route path="/guests" element={<Guests wedding={wedding}/>} />
+                    <Route path="/households" element={<Households wedding={wedding}/>} />
+                    <Route path="/labels" element={<CreateLabels wedding={wedding}/>} />
                   </Routes>
                 </Card>
             </Grid>

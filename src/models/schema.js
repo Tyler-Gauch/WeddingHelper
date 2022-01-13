@@ -1,5 +1,123 @@
 export const schema = {
     "models": {
+        "Wedding": {
+            "name": "Wedding",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "Households": {
+                    "name": "Households",
+                    "isArray": true,
+                    "type": {
+                        "model": "Household"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "weddingID"
+                    }
+                },
+                "Guests": {
+                    "name": "Guests",
+                    "isArray": true,
+                    "type": {
+                        "model": "Guest"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "weddingID"
+                    }
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "authorizedUsers": {
+                    "name": "authorizedUsers",
+                    "isArray": true,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true
+                },
+                "owner": {
+                    "name": "owner",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Weddings",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
+                                "identityClaim": "cognito:username",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "authorizedUsers"
+                                ],
+                                "operations": [
+                                    "read",
+                                    "create",
+                                    "update"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "Household": {
             "name": "Household",
             "fields": {
@@ -59,6 +177,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "weddingID": {
+                    "name": "weddingID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -82,6 +207,15 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byWedding",
+                        "fields": [
+                            "weddingID"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -160,6 +294,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "weddingID": {
+                    "name": "weddingID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -194,6 +335,15 @@ export const schema = {
                     }
                 },
                 {
+                    "type": "key",
+                    "properties": {
+                        "name": "byWedding",
+                        "fields": [
+                            "weddingID"
+                        ]
+                    }
+                },
+                {
                     "type": "auth",
                     "properties": {
                         "rules": [
@@ -214,5 +364,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "560c84f6b1360534d3b27fe9b2c825df"
+    "version": "4a10b32b9b9baab51b462f7aeb2312c2"
 };

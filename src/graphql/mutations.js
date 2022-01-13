@@ -1,6 +1,81 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const createWedding = /* GraphQL */ `
+  mutation CreateWedding(
+    $input: CreateWeddingInput!
+    $condition: ModelWeddingConditionInput
+  ) {
+    createWedding(input: $input, condition: $condition) {
+      id
+      name
+      Households {
+        nextToken
+        startedAt
+      }
+      Guests {
+        nextToken
+        startedAt
+      }
+      authorizedUsers
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateWedding = /* GraphQL */ `
+  mutation UpdateWedding(
+    $input: UpdateWeddingInput!
+    $condition: ModelWeddingConditionInput
+  ) {
+    updateWedding(input: $input, condition: $condition) {
+      id
+      name
+      Households {
+        nextToken
+        startedAt
+      }
+      Guests {
+        nextToken
+        startedAt
+      }
+      authorizedUsers
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteWedding = /* GraphQL */ `
+  mutation DeleteWedding(
+    $input: DeleteWeddingInput!
+    $condition: ModelWeddingConditionInput
+  ) {
+    deleteWedding(input: $input, condition: $condition) {
+      id
+      name
+      Households {
+        nextToken
+        startedAt
+      }
+      Guests {
+        nextToken
+        startedAt
+      }
+      authorizedUsers
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const createHousehold = /* GraphQL */ `
   mutation CreateHousehold(
     $input: CreateHouseholdInput!
@@ -17,6 +92,8 @@ export const createHousehold = /* GraphQL */ `
       city
       state
       zipcode
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -41,6 +118,8 @@ export const updateHousehold = /* GraphQL */ `
       city
       state
       zipcode
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -65,6 +144,8 @@ export const deleteHousehold = /* GraphQL */ `
       city
       state
       zipcode
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -84,9 +165,11 @@ export const createGuest = /* GraphQL */ `
       firstName
       lastName
       suffix
-      familyID
+      householdId
       hasPlusOne
       withBride
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -106,9 +189,11 @@ export const updateGuest = /* GraphQL */ `
       firstName
       lastName
       suffix
-      familyID
+      householdId
       hasPlusOne
       withBride
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -128,9 +213,11 @@ export const deleteGuest = /* GraphQL */ `
       firstName
       lastName
       suffix
-      familyID
+      householdId
       hasPlusOne
       withBride
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version

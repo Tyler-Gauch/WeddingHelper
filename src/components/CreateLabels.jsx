@@ -1,10 +1,10 @@
-import { Text, Flex, Grid, TextField, View, SelectField, Button, Table, TableHead, TableCell, TableBody, TableRow, CheckboxField, Pagination, usePagination, Card, Expander, ExpanderItem, IconCheckCircleOutline } from "@aws-amplify/ui-react";
-import { DataStore } from "aws-amplify";
+import { Alert, Flex, Grid, TextField, View, SelectField, Button, Table, TableHead, TableCell, TableBody, TableRow, Pagination, Expander, ExpanderItem, IconCheckCircleOutline } from "@aws-amplify/ui-react";
 import React, { useEffect, useState } from "react";
 import { capitalize, guestFullName } from "../helpers/ModelHelpers";
-import { Guest, Household } from "../models";
 import ReactToPrint from 'react-to-print';
 import './CreateLabels.scss';
+import { listGuests, listHouseholds } from "../graphql/queries";
+import { paginateQuery } from "../helpers/GraphQLHelper";
 
 const FONTS = [
     {style: 'Arial', family: "sans-serif"},
@@ -19,7 +19,7 @@ const FONTS = [
     {style: 'Brush Script MT', family: "cursive"}
 ];
 
-function Label({household, formality, guests, fontStyle, fontSize}) {
+function Label({household, formality, fontStyle, fontSize, guests}) {
     const {addressLine1, addressLine2, city, state, zipcode} = household;
     const address = [addressLine1, addressLine2].filter(f => f).join(" ");
 
@@ -75,7 +75,6 @@ function Label({household, formality, guests, fontStyle, fontSize}) {
 
 export default function CreateLabels(props) {
 
-    const [guests, setGuests] = useState([]);
     const [households, setHouseholds] = useState([]);
     const [labelsPerRow, setLabelsPerRow] = useState(5);
     const [formality, setFormality] = useState("casual");
@@ -87,31 +86,41 @@ export default function CreateLabels(props) {
     const [lastSelectedHousehold, setLastSelectedHousehold] = useState(null);
 
     useEffect(() => {
-        loadData();
-    }, []);
+        if (props.wedding) {
+            loadData();
+        } else {
+            setHouseholds([]);
+        }
+    }, [props.wedding]);
 
     const loadData = async () => {
-        const householdData = await DataStore.query(Household);
-        const guestData = await DataStore.query(Guest);
-        
-        const householdGuestMap = guestData.reduce((acc, g) => {
-            const existingHousehold = acc[g.householdId] ?? [];
-            existingHousehold.push(g);
-            return {                
-                ...acc,
-                [g.householdId]: existingHousehold,
-            };
-        }, {});
+        const householdData = await paginateQuery({
+            query: listHouseholds,
+            variables: {
+                filter: {
+                    weddingID: {eq: props.wedding.id}
+                }
+            }
+        });
+
+        const guestData = await paginateQuery({
+            query: listGuests,
+            variables: {
+                filter: {
+                    weddingID: {eq: props.wedding.id}
+                }
+            }
+        });
 
         const households = householdData.map(household => {
             return {
                 household: household,
                 printLabel: true,
                 selected: false,
+                guests: guestData.filter(g => g.householdId == household.id),
             };
         });
 
-        setGuests(householdGuestMap);
         setHouseholds(households);
     };
 
@@ -191,7 +200,7 @@ export default function CreateLabels(props) {
 
 
 
-    return (
+    return props.wedding ? (
         <>
             <Flex direction="row" justifyContent="center">
                 <Flex direction="column" justifyContent="center" alignItems="center">
@@ -215,9 +224,9 @@ export default function CreateLabels(props) {
                         width: '8.5in',
                     }}>
                         <Grid templateColumns={Array.from("c".repeat(labelsPerRow)).map(() => "1fr").join(" ")} ref={response => setPrintRef(response)}>
-                            {households.filter(h => h.printLabel).map(({household}) => {
+                            {households.filter(h => h.printLabel).map(({household, guests}) => {
                                 return (
-                                    <Label key={household.id} household={household} style={{padding: "10px"}} guests={guests[household.id]} formality={formality} fontStyle={font} fontSize={fontSize}/>
+                                    <Label key={household.id} household={household} style={{padding: "10px"}} guests={guests} formality={formality} fontStyle={font} fontSize={fontSize}/>
                                 );
                             })}           
                         </Grid>
@@ -246,7 +255,7 @@ export default function CreateLabels(props) {
                                             <TableRow key={householdConfig.household.id} onClick={(e) => onClickHousehold(e, householdConfig)} style={{cursor: 'pointer', ...(householdConfig.selected && {backgroundColor: 'whitesmoke'})}}>
                                                 <TableCell>{householdConfig.selected && <IconCheckCircleOutline />}</TableCell>
                                                 <TableCell>{householdConfig.household.addressLine1}</TableCell>
-                                                <TableCell>{guests[householdConfig.household.id].map(g => guestFullName(g)).join(", ")}</TableCell>
+                                                <TableCell>{householdConfig.guests.map(g => guestFullName(g)).join(", ")}</TableCell>
                                                 <TableCell>
                                                     {householdConfig.printLabel ? 'Yes' : 'No'}
                                                 </TableCell>
@@ -272,5 +281,5 @@ export default function CreateLabels(props) {
                 </ExpanderItem>
             </Expander>
         </>
-    );
+    ) : (<Alert variation="warning">Please select a wedding!</Alert>);
 }

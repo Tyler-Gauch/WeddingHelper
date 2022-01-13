@@ -1,6 +1,72 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateWedding = /* GraphQL */ `
+  subscription OnCreateWedding {
+    onCreateWedding {
+      id
+      name
+      Households {
+        nextToken
+        startedAt
+      }
+      Guests {
+        nextToken
+        startedAt
+      }
+      authorizedUsers
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateWedding = /* GraphQL */ `
+  subscription OnUpdateWedding {
+    onUpdateWedding {
+      id
+      name
+      Households {
+        nextToken
+        startedAt
+      }
+      Guests {
+        nextToken
+        startedAt
+      }
+      authorizedUsers
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteWedding = /* GraphQL */ `
+  subscription OnDeleteWedding {
+    onDeleteWedding {
+      id
+      name
+      Households {
+        nextToken
+        startedAt
+      }
+      Guests {
+        nextToken
+        startedAt
+      }
+      authorizedUsers
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const onCreateHousehold = /* GraphQL */ `
   subscription OnCreateHousehold {
     onCreateHousehold {
@@ -14,6 +80,8 @@ export const onCreateHousehold = /* GraphQL */ `
       city
       state
       zipcode
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -35,6 +103,8 @@ export const onUpdateHousehold = /* GraphQL */ `
       city
       state
       zipcode
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -56,6 +126,8 @@ export const onDeleteHousehold = /* GraphQL */ `
       city
       state
       zipcode
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -72,9 +144,11 @@ export const onCreateGuest = /* GraphQL */ `
       firstName
       lastName
       suffix
-      familyID
+      householdId
       hasPlusOne
       withBride
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -91,9 +165,11 @@ export const onUpdateGuest = /* GraphQL */ `
       firstName
       lastName
       suffix
-      familyID
+      householdId
       hasPlusOne
       withBride
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version
@@ -110,9 +186,11 @@ export const onDeleteGuest = /* GraphQL */ `
       firstName
       lastName
       suffix
-      familyID
+      householdId
       hasPlusOne
       withBride
+      weddingID
+      authorizedUsers
       createdAt
       updatedAt
       _version

@@ -1,7 +1,10 @@
 import { Table, TableCell, TableRow, TableHead, TableBody, Heading, Grid, View, Button, Flex, TextField, Alert, IconDelete, Text } from "@aws-amplify/ui-react";
-import { DataStore } from "aws-amplify";
+import { API } from "aws-amplify";
 import React, { useEffect, useState } from "react";
 import { CSVUploadModal, Modal } from ".";
+import { createHousehold, deleteHousehold as deleteHouseholdMutation } from "../graphql/mutations";
+import { listHouseholds } from "../graphql/queries";
+import { paginateQuery } from "../helpers/GraphQLHelper";
 import { Household } from '../models';
 
 function validateHousehold(household) {
@@ -12,7 +15,7 @@ function validateHousehold(household) {
         && household.zipcode.length === 5;
 }
 
-function AddHouseholdModal({show, onClose, onSave}) {
+function AddHouseholdModal({show, onClose, onSave, wedding}) {
 
     const [addressLine1, setAddressLine1] = useState(null);
     const [addressLine2, setAddressLine2] = useState(null);
@@ -29,6 +32,7 @@ function AddHouseholdModal({show, onClose, onSave}) {
             city: city,
             state: state,
             zipcode: zipcode,
+            weddingID: wedding.id,
         });
         
         if (!validateHousehold(household)) {
@@ -79,46 +83,58 @@ export default function Households(props) {
     const [showCsvUpload, setShowCsvUpload] = useState(false);
 
     useEffect(() => {
-        loadData();
-    }, []);
+        if (props.wedding) {
+            loadData();
+        } else {
+            setHouseholds([]);
+        }
+    }, [props.wedding]);
 
     const loadData = async () => {
-        const data = await DataStore.query(Household);
-        setHouseholds(data);
+        const loadedHouseholds = await paginateQuery({
+            query: listHouseholds,
+            variables: {
+                filter: {
+                    weddingID: {eq: props.wedding.id}
+                }
+            }});
+
+        setHouseholds(loadedHouseholds);
     };
 
     const uploadHouseholds = async (csvData) => {
-        if (window.confirm("Save households?")) {
-
-            for (let i = 0; i < csvData.length; i++) {
-                const newHousehold = new Household(csvData[i]);
-                await DataStore.save(newHousehold);
-            }
-
-            setShowCsvUpload(false);
+        for (let i = 0; i < csvData.length; i++) {
+            const newHousehold = new Household({
+                ...csvData[i],
+                weddingID: props.wedding.id,
+            });
+            await API.graphql({query: createHousehold, variables: {input: newHousehold}});
         }
+
+        setShowCsvUpload(false);
+        await loadData();
     }
 
     const saveNewHousehold = async (household) => {
         setShowAddHousehold(false);
-        await DataStore.save(household);
+        await API.graphql({query: createHousehold, variables: {input: household}});
         await loadData();
     }
 
-    const deleteHousehold = async (household) => {
-        if (household.guests) {
+    const deleteHousehold = async ({id, _version, guests}) => {
+        if (guests) {
             alert("The house still has guests, can't delete");
             return;
         }
-        await DataStore.delete(household);
+        await API.graphql({query: deleteHouseholdMutation, variables: {id: id, _version: _version}});
         await loadData();
     }
 
-    return (
+    return props.wedding ? (
         <>
             <Grid templateColumns={"1fr 1fr"} templateRows={"1fr"}>
                 <View columnStart="1" columnEnd="2">
-                    <Heading level={3}>Households</Heading>
+                    <Heading level={3}>Households ({households.length})</Heading>
                 </View>
                 <Flex direction="row" justifyContent="right" columnStart="2" columnEnd="-1">
                     <Button onClick={() => setShowAddHousehold(true)}>Add Household</Button>
@@ -128,7 +144,8 @@ export default function Households(props) {
             <AddHouseholdModal
                 show={showAddHousehold}
                 onClose={() => setShowAddHousehold(false)}
-                onSave={saveNewHousehold}/>
+                onSave={saveNewHousehold}
+                wedding={props.wedding}/>
             <CSVUploadModal
                 show={showCsvUpload}
                 onClose={() => setShowCsvUpload(false)}
@@ -169,5 +186,5 @@ export default function Households(props) {
                 </TableBody>
             </Table>
         </>
-    );
+    ) : (<Alert variation="warning">Please select a wedding!</Alert>);
 }

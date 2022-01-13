@@ -1,4 +1,12 @@
-type Household @model @auth(rules: [{allow: public}]) {
+type Wedding @model @auth(rules: [{allow: owner, ownerField: "authorizedUsers", operations: [read, create, update, delete]}]) {
+  id: ID!
+  name: String
+  Households: [Household] @hasMany(indexName: "byWedding", fields: ["id"])
+  Guests: [Guest] @hasMany(indexName: "byWedding", fields: ["id"])
+  authorizedUsers: [String]
+}
+
+type Household @model @auth(rules: [{allow: owner, ownerField: "authorizedUsers", operations: [read, create, update, delete]}]) {
   id: ID!
   Guests: [Guest] @hasMany(indexName: "byHousehold", fields: ["id"])
   addressLine1: String
@@ -6,9 +14,11 @@ type Household @model @auth(rules: [{allow: public}]) {
   city: String
   state: String
   zipcode: String
+  weddingID: ID @index(name: "byWedding")
+  authorizedUsers: [String]
 }
 
-type Guest @model @auth(rules: [{allow: public}]) {
+type Guest @model @auth(rules: [{allow: owner, ownerField: "authorizedUsers", operations: [read, create, update, delete]}]) {
   id: ID!
   prefix: String
   firstName: String
@@ -17,5 +27,7 @@ type Guest @model @auth(rules: [{allow: public}]) {
   householdId: ID @index(name: "byHousehold")
   hasPlusOne: Boolean
   withBride: Boolean
+  weddingID: ID @index(name: "byWedding")
+  authorizedUsers: [String]
 }
  
